@@ -17,6 +17,7 @@ public class Main {
 		ArrayList<Point> points = new ArrayList<Point>();
 		Point start = new Point(100, 400);
 		Point end = new Point(600, 500);
+		int currentControlIndex = 0;
 		points.add(start);
 		points.add(end);
 		float inc = 0.001f;
@@ -33,12 +34,9 @@ public class Main {
 			}
 			
 			if(Mouse.getMouseDown(MouseEvent.BUTTON2)) {
-				points.add(points.size() - 1, new Point(Mouse.getMouseX(), Mouse.getMouseY()));
-			}
-			
-			g.setColor(Color.WHITE);
-			for(int i = 0; i < points.size(); i++) {
-				g.fillOval(points.get(i).x, points.get(i).y, 2, 2);
+				Point p = new Point(Mouse.getMouseX(), Mouse.getMouseY());
+				currentControlIndex = points.size() - 1;
+				points.add(points.size() - 1, p);
 			}
 			
 			float t = 0;
@@ -69,7 +67,18 @@ public class Main {
 				bx = sumX;
 				by = sumY;
 				
+				g.setColor(Color.WHITE);
 				g.fillOval((int)bx, (int)by, 2, 2);
+				
+				for(int i = 0; i < points.size(); i++) {
+					if(i == currentControlIndex && points.size() > 2) {
+						g.setColor(Color.RED);
+					}else {
+						g.setColor(Color.GREEN);
+					}
+					
+					g.fillOval(points.get(i).x - 3, points.get(i).y - 3, 6, 6);
+				}
 				
 				t += inc;
 			}
@@ -77,7 +86,7 @@ public class Main {
 			Mouse.update();
 			window.render();
 			try {
-				Thread.sleep(1);
+				Thread.sleep(16);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
