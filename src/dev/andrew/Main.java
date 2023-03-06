@@ -6,10 +6,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class Main {
-
-	// B(t) = (1 - t) * P1 + (P2 * t)
-	// B(t) = (1 - t) * Q1 + (Q2 * t)
-	// B(t) = (1 - t) * (P0 * (1 - t) + P1 * t) + t * (P1 * (1 - t) + P2 * t)
 	
 	public static void main(String[] args) {
 		Window window = new Window(800, 600, "Bezier Curves");
@@ -26,11 +22,7 @@ public class Main {
 			window.clear();
 			
 			if(Mouse.getMouse(MouseEvent.BUTTON1)) {
-				points.get(0).setLocation(Mouse.getMouseX(), Mouse.getMouseY());
-			}
-			
-			if(Mouse.getMouse(MouseEvent.BUTTON3)) {
-				points.get(points.size() - 1).setLocation(Mouse.getMouseX(), Mouse.getMouseY());
+				points.get(currentControlIndex).setLocation(Mouse.getMouseX(), Mouse.getMouseY());
 			}
 			
 			if(Mouse.getMouseDown(MouseEvent.BUTTON2)) {
@@ -39,18 +31,22 @@ public class Main {
 				points.add(points.size() - 1, p);
 			}
 			
+			if(Mouse.isScrolling()) {
+				if(Mouse.getScrollAmount() > 0) {
+					currentControlIndex++;
+				}else {
+					currentControlIndex--;
+				}
+				
+				if(currentControlIndex >= points.size()) {
+					currentControlIndex = 0;
+				}else if(currentControlIndex < 0) {
+					currentControlIndex = points.size() - 1;
+				}
+			}
+			
 			float t = 0;
 			for(int k = 0; k <= 1 / inc; k++) {
-				// quadratic curve
-//				float bx = (1 - t) * (p0.x * (1 - t) + p1.x * t) + t * (p1.x * (1 - t) + p2.x * t);
-//				float by = (1 - t) * (p0.y * (1 - t) + p1.y * t) + t * (p1.y * (1 - t) + p2.y * t);
-				
-				// cubic curve
-//				float bx = ((1 - t) * (1 - t) * (1 - t)) * p0.x + 3 * t * ((1 - t) * (1 - t)) * p1.x + 3 * (t * t) * (1 - t) * p2.x + (t * t * t) * p3.x;
-//				float by = ((1 - t) * (1 - t) * (1 - t)) * p0.y + 3 * t * ((1 - t) * (1 - t)) * p1.y + 3 * (t * t) * (1 - t) * p2.y + (t * t * t) * p3.y;
-				
-				float bx = 0;
-				float by = 0;
 				float sumX = 0;
 				float sumY = 0;
 				int n = points.size() - 1;
@@ -64,11 +60,8 @@ public class Main {
 					sumY += poly * points.get(i).y;
 				}
 				
-				bx = sumX;
-				by = sumY;
-				
 				g.setColor(Color.WHITE);
-				g.fillOval((int)bx, (int)by, 2, 2);
+				g.fillOval((int)sumX, (int)sumY, 2, 2);
 				
 				for(int i = 0; i < points.size(); i++) {
 					if(i == currentControlIndex && points.size() > 2) {
