@@ -64,7 +64,7 @@ public class Main {
 				g.fillOval((int)sumX, (int)sumY, 2, 2);
 				
 				for(int i = 0; i < points.size(); i++) {
-					if(i == currentControlIndex && points.size() > 2) {
+					if(i == currentControlIndex) {
 						g.setColor(Color.RED);
 					}else {
 						g.setColor(Color.GREEN);
