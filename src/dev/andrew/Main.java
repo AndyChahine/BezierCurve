@@ -15,30 +15,31 @@ public class Main {
 		Window window = new Window(800, 600, "Bezier Curves");
 		Graphics2D g = window.getGraphics();
 		ArrayList<Point> points = new ArrayList<Point>();
-		Point p0 = new Point(100, 400);
-		Point p3 = new Point(600, 500);
-		points.add(p0);
-		points.add(p3);
+		Point start = new Point(100, 400);
+		Point end = new Point(600, 500);
+		points.add(start);
+		points.add(end);
 		float inc = 0.001f;
 		
 		while(true) {
 			window.clear();
 			
 			if(Mouse.getMouse(MouseEvent.BUTTON1)) {
-				p0.setLocation(Mouse.getMouseX(), Mouse.getMouseY());
+				points.get(0).setLocation(Mouse.getMouseX(), Mouse.getMouseY());
 			}
 			
 			if(Mouse.getMouse(MouseEvent.BUTTON3)) {
-				p3.setLocation(Mouse.getMouseX(), Mouse.getMouseY());
+				points.get(points.size() - 1).setLocation(Mouse.getMouseX(), Mouse.getMouseY());
 			}
 			
-			if(Mouse.getMouse(MouseEvent.BUTTON2)) {
-				
+			if(Mouse.getMouseDown(MouseEvent.BUTTON2)) {
+				points.add(points.size() - 1, new Point(Mouse.getMouseX(), Mouse.getMouseY()));
 			}
 			
 			g.setColor(Color.WHITE);
-			g.fillOval(p0.x, p0.y, 2, 2);
-			g.fillOval(p3.x, p3.y, 2, 2);
+			for(int i = 0; i < points.size(); i++) {
+				g.fillOval(points.get(i).x, points.get(i).y, 2, 2);
+			}
 			
 			float t = 0;
 			for(int k = 0; k <= 1 / inc; k++) {
@@ -73,7 +74,7 @@ public class Main {
 				t += inc;
 			}
 			
-			
+			Mouse.update();
 			window.render();
 			try {
 				Thread.sleep(1);
